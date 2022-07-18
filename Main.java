@@ -1,48 +1,50 @@
 package tictactoe;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
-    public static String status(char[] game){
+    public static String status(char[][] game){
         char[] win = {'_', '_'};
         for (int i = 0; i < 3; i++) {
-            if ((game[i * 3] == 'X' &&
-                    game[i * 3 + 1] == 'X' &&
-                    game[i * 3 + 2] == 'X') ||
-                    (game[i * 3] == 'O' &&
-                    game[i * 3 + 1] == 'O' &&
-                    game[i * 3 + 2] == 'O'))  {
+            if ((game[i][0] == 'X' &&
+                    game[i][1] == 'X' &&
+                    game[i][2] == 'X') ||
+                    (game[i][0] == 'O' &&
+                    game[i][1] == 'O' &&
+                    game[i][2] == 'O'))  {
                 if (win[0] == '_') {
-                    win[0] = game[i * 3];
+                    win[0] = game[i][0];
                 } else {
-                    win[1] = game[i * 3];
+                    win[1] = game[i][0];
                 }
             }
-            if ((game[i] == 'X' &&
-                    game[i + 3] == 'X' &&
-                    game[i + 6] == 'X') ||
-                    (game[i] == 'O' &&
-                            game[i + 3] == 'O' &&
-                            game[i + 6] == 'O'))  {
+            if ((game[0][i] == 'X' &&
+                    game[1][i] == 'X' &&
+                    game[2][i] == 'X') ||
+                    (game[0][i] == 'O' &&
+                            game[1][i] == 'O' &&
+                            game[2][i] == 'O'))  {
                 if (win[0] == '_') {
-                    win[0] = game[i];
+                    win[0] = game[0][i];
                 } else {
-                    win[1] = game[i];
+                    win[1] = game[0][i];
                 }
             }
         }
-        if ((game[0] == 'X' && game[4] == 'X' && game[8] == 'X') ||
-                (game[2] == 'X' && game[4] == 'X' && game[6] == 'X') ||
-                (game[0] == 'O' && game[4] == 'O' && game[8] == 'O') ||
-                (game[2] == 'O' && game[4] == 'O' && game[6] == 'O')) {
-            return game[4] + " wins";
+        if ((game[0][0] == 'X' && game[1][1] == 'X' && game[2][2] == 'X') ||
+                (game[0][2] == 'X' && game[1][1] == 'X' && game[2][0] == 'X') ||
+                (game[0][0] == 'O' && game[1][1] == 'O' && game[2][2] == 'O') ||
+                (game[0][2] == 'O' && game[1][1] == 'O' && game[2][0] == 'O')) {
+            return game[1][1] + " wins";
         }
         int countX = 0, countO = 0;
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                if (game[i * 3 + j] == 'X') {
+                if (game[i][j] == 'X') {
                     countX++;
-                } else if (game[i * 3 + j] == 'O') {
+                } else if (game[i][j] == 'O') {
                     countO++;
                 }
             }
@@ -56,16 +58,15 @@ public class Main {
             return "Draw";
         }
         return "Game not finished";
-
     }
 
 
-    public static void printGame(char[] game) {
+    public static void printGame(char[][] game) {
         System.out.println("---------");
         for (int i = 0; i < 3; i++){
             System.out.print("| ");
             for (int j = 0; j < 3; j++){
-                System.out.printf("%c ", game[i * 3 + j]);
+                System.out.printf("%c ", game[i][j]);
             }
             System.out.println("|");
         }
@@ -73,12 +74,54 @@ public class Main {
     }
 
 
+    public static char[][] inputGame(Scanner sc) {
+        System.out.print("Enter cells: ");
+        char[] tmp = sc.next().toCharArray();
+        char[][] matrix = new char[3][3];
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                matrix[i][j] = tmp[i * 3 + j];
+            }
+        }
+        return matrix;
+    }
+
+
+    public static char[][] inputCoordinates(char[][] matrix){
+        int x = 0, y = 0;
+        do {
+            Scanner sc2 = new Scanner(System.in);
+            System.out.print("Enter the coordinates: ");
+            if (sc2.hasNextInt()) {
+                x = sc2.nextInt();
+                if (sc2.hasNextInt()) {
+                    y = sc2.nextInt();
+                    if (0 < x && x < 4 && 0 < y && y < 4) {
+                        if (matrix[x - 1][y - 1] == '_') {
+                            matrix[x - 1][y - 1] = 'X';
+                            break;
+                        } else {
+                            System.out.println("This cell is occupied! Choose another one!");
+                        }
+
+                    } else {
+                        System.out.println("Coordinates should be from 1 to 3!");
+                    }
+                }
+                continue;
+            }
+            System.out.println("You should enter numbers!");
+        } while (x > 1 || x < 3 || y > 1 || y < 3);
+        return matrix;
+    }
+
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter cells: ");
-        char[] game = scanner.next().toCharArray();
+        char[][] game = inputGame(scanner);
         printGame(game);
-        System.out.println(status(game));
-
+        game = inputCoordinates(game);
+        printGame(game);
+//        System.out.println(status(game));
     }
 }
